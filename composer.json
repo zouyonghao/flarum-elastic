@@ -1,0 +1,39 @@
+{
+    "name": "rrmode/flarum-elasticsearch",
+    "description": "Elasticsearch support for Flarum",
+    "version": "0.3",
+    "keywords": [
+        "flarum"
+    ],
+    "type": "flarum-extension",
+    "license": "GPL-3.0",
+    "require": {
+        "flarum/core": "^0.1.0-beta.8",
+        "elasticsearch/elasticsearch": "^7.12"
+    },
+    "authors": [
+        {
+            "name": "rrmode",
+            "email": "retretx@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Rrmode\\FlarumES\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Flarum ES",
+            "icon": {
+                "name": "fab fa-searchengin",
+                "backgroundColor": "",
+                "color": ""
+            }
+        },
+        "flagrow": {
+            "discuss": ""
+        }
+    }
+}
