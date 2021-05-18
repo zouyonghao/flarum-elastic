@@ -1,0 +1,11 @@
+rrmode-elasticsearch:
+  admin:
+    settings:
+      username: 'Username'
+      password: 'Password'
+      cloud_id: 'Cloud ID'
+      api_key: 'API Key'
+      api_id: 'API ID'
+      hosts: 'Hosts'
+      static_mapping: 'Static mapping'
+    unavailable: 'This feature is not available at the moment'

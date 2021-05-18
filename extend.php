@@ -12,16 +12,32 @@
 namespace Rrmode\FlarumES;
 
 use Elasticsearch\Client;
-use Flarum\Api\Controller\ListDiscussionsController;
+use Flarum\Console\AbstractCommand;
 use Flarum\Discussion\Discussion;
+use Flarum\Discussion\Search\DiscussionSearcher;
 use Flarum\Extend;
 use Flarum\Post\Post;
+use Flarum\User\Search\UserSearcher;
+use Flarum\User\User;
 use Illuminate\Container\Container;
-use Rrmode\FlarumES\Controller\DiscussionsListController;
-use Rrmode\FlarumES\Event\EventSubscriber;
+use Rrmode\FlarumES\Console\CreateIndexCommand;
+use Rrmode\FlarumES\Console\DropIndexCommand;
+use Rrmode\FlarumES\Console\ReindexAllCommand;
+use Rrmode\FlarumES\Event\DiscussionSubscriber;
+use Rrmode\FlarumES\Event\PostSubscriber;
+use Rrmode\FlarumES\Event\UserSubscriber;
 use Rrmode\FlarumES\Provider\Elasticsearch;
+use Rrmode\FlarumES\Search\DiscussionGambit;
+use Rrmode\FlarumES\Search\UserGambit;
+use Rrmode\FlarumES\Service\Index;
+use Rrmode\FlarumES\Service\Search;
 
 return [
+
+    /**
+     * Localization
+     */
+    new Extend\Locales(__DIR__ . '/locale'),
 
     /**
      * Front-end assets registering
@@ -43,7 +59,7 @@ return [
 
     /**
      * Service provider
-     * Registers very useful macro for Flarum Post model
+     * Registers very useful macro
      * and Elasticsearch client Container binding
      * @see Post
      * @see Client
@@ -53,19 +69,77 @@ return [
         ->register(Elasticsearch::class),
 
     /**
-     * API route for real-time searching
-     * @see Post
-     * @see ListDiscussionsController
+     * Elastic Gambit for Discussion
+     * @see Discussion
+     * @see DiscussionSearcher
      */
-    (new Extend\Routes('api'))
-        ->get('/es/discussions', 'es.posts', DiscussionsListController::class),
+    (new Extend\SimpleFlarumSearch(DiscussionSearcher::class))
+        ->addGambit(DiscussionGambit::class),
 
     /**
-     * Events subscriber
-     * Tracks Posts and Discussions updates
+     * Elastic Gambit for User
+     * @see User
+     * @see UserSearcher
+     */
+    (new Extend\SimpleFlarumSearch(UserSearcher::class))
+        ->addGambit(UserGambit::class),
+
+    /**
+     * Post events subscriber
      * @see Post
      * @see Discussion
      */
     (new Extend\Event())
-        ->subscribe(EventSubscriber::class),
+        ->subscribe(PostSubscriber::class),
+
+    /**
+     * Discussion events subscriber
+     * @see Discussion
+     */
+    (new Extend\Event())
+        ->subscribe(DiscussionSubscriber::class),
+
+    /**
+     * User events subscriber
+     * @see User
+     */
+    (new Extend\Event())
+        ->subscribe(UserSubscriber::class),
+
+    /**
+     * Flarum built-in console app commands
+     * @see AbstractCommand
+     */
+
+    /**
+     * Command: index
+     * Alias: index:refresh
+     *
+     * Recreate index with all Flarum Posts
+     * @see AbstractCommand
+     * @see Search
+     * @see Post
+     */
+    (new Extend\Console())
+        ->command(ReindexAllCommand::class),
+
+    /**
+     * Command: index:create
+     *
+     * Create index
+     * @see AbstractCommand
+     * @see Index
+     */
+    (new Extend\Console())
+        ->command(CreateIndexCommand::class),
+
+    /**
+     * Command: index:drop
+     *
+     * Drop index
+     * @see AbstractCommand
+     * @see Index
+     */
+    (new Extend\Console())
+        ->command(DropIndexCommand::class)
 ];

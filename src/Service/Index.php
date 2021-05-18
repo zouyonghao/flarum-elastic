@@ -11,60 +11,21 @@
 
 namespace Rrmode\FlarumES\Service;
 
-use Elasticsearch\Client;
 use Flarum\Post\Post;
-use Flarum\Settings\SettingsRepositoryInterface;
 
-class Index
+/**
+ * ES Index service
+ * @package Rrmode\FlarumES\Service
+ */
+class Index extends ClientService
 {
-    /**
-     * @var Client Elasticsearch client
-     */
-    private $client;
-
-    /**
-     * @var string Name of index for Flarum
-     */
-    private $index_name;
-
-    /**
-     * @var int Number of shards
-     */
-    private $shards;
-
-    /**
-     * @var int Number of replicas
-     */
-    private $replicas;
-
-    /**
-     * @var string Analyzer for text fields
-     */
-    private $text_analyzer;
-
-    /**
-     * @var string Search analyzer for text fields
-     */
-    private $text_search_analyzer;
-
-    public function __construct(Client $client, SettingsRepositoryInterface $settings)
-    {
-        $this->client = $client;
-
-        $this->index_name = $settings->get('es.index', 'flarum');
-        $this->shards = $settings->get('es.shards', 1);
-        $this->replicas = $settings->get('es.replicas', 0);
-        $this->text_analyzer = $settings->get('es.analyzer', 'english');
-        $this->text_search_analyzer = $settings->get('es.search_analyzer', 'standard');
-    }
-
     /**
      * Check if index already exists
      * @return bool
      */
     public function indexExists(): bool
     {
-        return $this->client->indices()->exists(['index' => $this->index_name]);
+        return $this->client->indices()->exists(['index' => $this->indexName]);
     }
 
     /**
@@ -75,10 +36,10 @@ class Index
     {
         return $this->indexExists() ? false :
             $this->client->indices()->create([
-                'index' => $this->index_name,
+                'index' => $this->indexName,
                 'body' => [
                     'settings' => $this->indexSettings(),
-                    'mappings' => $this->indexMappings()
+//                    'mappings' => $this->indexMappings()
                 ]
             ]);
     }
@@ -89,7 +50,7 @@ class Index
      */
     public function dropIndex()
     {
-        return $this->indexExists() ? $this->client->indices()->delete(['index' => $this->index_name])
+        return $this->indexExists() ? $this->client->indices()->delete(['index' => $this->indexName])
             : false;
     }
 
@@ -112,8 +73,9 @@ class Index
     public function indexSettings(): array
     {
         return [
-            'number_of_shards' => $this->shards,
-            'number_of_replicas' => $this->replicas
+            'number_of_shards' => $this->shardCount,
+            'number_of_replicas' => $this->replicasCount,
+            'analysis' => $this->setupAnalysis()
         ];
     }
 
@@ -139,8 +101,8 @@ class Index
             'properties' => [
                 'content' => [
                     'type' => 'text',
-                    'analyzer' => $this->text_analyzer,
-                    'search_analyzer' => $this->text_search_analyzer
+                    'analyzer' => $this->textAnalyzer,
+                    'search_analyzer' => $this->textSearchAnalyzer
                 ],
 
                 'comment_id' => [
@@ -151,17 +113,9 @@ class Index
                     'type' => 'integer',
                 ],
 
-                'count' => [
-                    'type' => 'integer'
-                ],
-
                 'created_at' => [
                     'type' => 'date'
                 ],
-
-                'started_at' => [
-                    'type' => 'date'
-                ]
             ]
         ];
     }
@@ -173,6 +127,6 @@ class Index
      */
     public function name(): string
     {
-        return $this->index_name;
+        return $this->indexName;
     }
 }

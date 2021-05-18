@@ -13,58 +13,46 @@ namespace Rrmode\FlarumES\Service;
 
 use Elasticsearch\Client;
 use Flarum\Post\Post;
-use Illuminate\Database\Eloquent\Collection;
+use Flarum\Settings\SettingsRepositoryInterface;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Rrmode\FlarumES\Service\Search\Results;
 
-class Search
+/**
+ * ES Search service
+ * @package Rrmode\FlarumES\Service
+ */
+class Search extends ClientService
 {
-    /**
-     * @var Client Elasticsearch client
-     */
-    private $client;
+    protected $index;
 
-    /**
-     * @var Index Index operations
-     */
-    private $index;
-
-    public function __construct(Client $client, Index $index)
+    public function __construct(Client $client, SettingsRepositoryInterface $settings, Index $index)
     {
-        $this->client = $client;
+        parent::__construct($client, $settings);
         $this->index = $index;
     }
 
     /**
-     * Destroy old index, create new and add all Flarum Posts
-     * @see Post
+     * Destroy old index, create new and add all entities
+     * @see Model
      */
     public function reindexAll(): void
     {
         $this->index->regenerateIndex();
-        Post::all()->each(function (Post $post) {
-            $this->indexPost($post);
-        });
+        foreach ($this->dynamicEntities as $entity) {
+            $entity::all()->each(function (Model $model) {
+                $this->index($model);
+            });
+        }
     }
 
-    /**
-     * Add Flarum Post document for indexing
-     * @see Post
-     * @param Post $post
-     * @return array|callable
-     */
-    public function indexPost(Post $post)
+    public function index(Model $model)
     {
         return $this->client->index([
             'index' => $this->index->name(),
-            'id' => $post->getKey(),
-            'type' => 'post',
-            'body' => [
-                'content' => $post->content,
-                'comment_id' => $post->getKey(),
-                'discussion_id' => $post->discussion_id,
-                'count' => $post->discussion->posts->count(),
-                'created_at' => $post->created_at,
-                'started_at' => $post->discussion->created_at
-            ]
+            'id' => $model->getKey(),
+            'type' => $model->getTable(),
+            'body' => $model->toArray()
         ]);
     }
 
@@ -78,39 +66,31 @@ class Search
     {
         return $this->client->delete([
             'index' => $this->index->name(),
-            'type' => 'post',
             'id' => $post->getKey()
         ]);
     }
 
     /**
-     * Search Flarum Posts by text
-     * @see Post
-     * @param $text
-     * @return Collection of Posts
+     * Search Flarum entities by wildcard
+     * @param string $text
+     * @return Results of entities
+     * @see Results
      */
-    public function find($text): Collection
+    public function find(string $text): Results
     {
         $response = $this->client->search([
             'index' => $this->index->name(),
-            'type' => 'post',
             'body' => [
                 'query' => [
-                    'match' => [
-                        'content' => $text
+                    'query_string' => [
+                        'query' => "*$text*"
                     ]
                 ]
             ]
         ]);
 
-        if (!isset($response['hits']['hits'])) {
-            return new Collection();
-        }
-
-        $modelIds = collect($response['hits']['hits'])->map(function ($hit) {
-            return $hit['_source']['comment_id'];
-        });
-
-        return Post::whereIn('id', $modelIds->all())->get();
+        return Results::make(collect($response['hits']['hits'])->map(function ($hit) {
+            return $hit;
+        }), collect($this->dynamicEntities));
     }
 }
