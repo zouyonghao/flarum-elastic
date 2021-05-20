@@ -1,7 +1,7 @@
 {
     "name": "rrmode/flarum-es",
     "description": "Elasticsearch support for Flarum",
-    "version": "0.4",
+    "version": "0.5",
     "keywords": [
         "flarum"
     ],
