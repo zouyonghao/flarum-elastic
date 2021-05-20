@@ -11,7 +11,7 @@
 
 namespace Rrmode\FlarumES\Search;
 
-use Flarum\Search\SearchState;
+use Flarum\Discussion\Discussion;
 use Rrmode\FlarumES\AbstractElasticGambit;
 
 /**
@@ -20,11 +20,9 @@ use Rrmode\FlarumES\AbstractElasticGambit;
  */
 class DiscussionGambit extends AbstractElasticGambit
 {
-    /**
-     * @inheritDoc
-     */
-    public function apply(SearchState $search, $bit): bool
+
+    public function getModelClass(): string
     {
-        // TODO: Implement apply() method.
+        return Discussion::class;
     }
 }

@@ -11,7 +11,7 @@
 
 namespace Rrmode\FlarumES\Search;
 
-use Flarum\Search\SearchState;
+use Flarum\User\User;
 use Rrmode\FlarumES\AbstractElasticGambit;
 
 /**
@@ -20,11 +20,8 @@ use Rrmode\FlarumES\AbstractElasticGambit;
  */
 class UserGambit extends AbstractElasticGambit
 {
-    /**
-     * @inheritDoc
-     */
-    public function apply(SearchState $search, $bit): bool
+    public function getModelClass(): string
     {
-        // TODO: Implement apply() method.
+        return User::class;
     }
 }

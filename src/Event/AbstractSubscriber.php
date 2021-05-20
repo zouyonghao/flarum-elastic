@@ -11,11 +11,18 @@
 
 namespace Rrmode\FlarumES\Event;
 
+use Rrmode\FlarumES\Service\Search;
+
 /**
  * Subscriber routines
  * @package Rrmode\FlarumES\Event
  */
 class AbstractSubscriber
 {
+    public $search;
 
+    public function __construct(Search $search)
+    {
+        $this->search = $search;
+    }
 }

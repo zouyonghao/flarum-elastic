@@ -13,6 +13,8 @@ namespace Rrmode\FlarumES;
 
 use Flarum\Search\GambitInterface;
 use Flarum\Search\SearchState;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Rrmode\FlarumES\Service\Search;
 
 /**
@@ -34,5 +36,19 @@ abstract class AbstractElasticGambit implements GambitInterface
     /**
      * @inheritDoc
      */
-    abstract public function apply(SearchState $search, $bit): bool;
+    public function apply(SearchState $search, $bit): bool
+    {
+        $results = $this->es->find($bit)->model($this->getModelClass())->get();
+
+        if ($results->isEmpty()) {
+            return false;
+        }
+
+        $search->getQuery()->whereIn('id', $results->map(function (Model $model) {
+            return $model->getKey();
+        }));
+        return true;
+    }
+
+    abstract public function getModelClass(): string;
 }

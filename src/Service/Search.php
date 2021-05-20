@@ -14,7 +14,6 @@ namespace Rrmode\FlarumES\Service;
 use Elasticsearch\Client;
 use Flarum\Post\Post;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Rrmode\FlarumES\Service\Search\Results;
 
@@ -46,27 +45,31 @@ class Search extends ClientService
         }
     }
 
+    /**
+     * Index Flarum document
+     * @param Model $model
+     * @return array|callable
+     */
     public function index(Model $model)
     {
         return $this->client->index([
             'index' => $this->index->name(),
             'id' => $model->getKey(),
-            'type' => $model->getTable(),
+            'type' => get_class($model),
             'body' => $model->toArray()
         ]);
     }
 
     /**
-     * Delete Flarum Post document from indexing
-     * @see Post
-     * @param Post $post
+     * Delete Flarum document from indexing
+     * @param Model $model
      * @return array|callable
      */
-    public function delete(Post $post)
+    public function delete(Model $model)
     {
         return $this->client->delete([
             'index' => $this->index->name(),
-            'id' => $post->getKey()
+            'id' => $model->getKey()
         ]);
     }
 
@@ -89,7 +92,7 @@ class Search extends ClientService
             ]
         ]);
 
-        return Results::make(collect($response['hits']['hits'])->map(function ($hit) {
+        return new Results(collect($response['hits']['hits'])->map(function ($hit) {
             return $hit;
         }), collect($this->dynamicEntities));
     }

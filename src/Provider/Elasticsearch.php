@@ -15,13 +15,9 @@ use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Flarum\Foundation\AbstractServiceProvider;
 use Flarum\Settings\SettingsRepositoryInterface;
-use Rrmode\FlarumES\Service\Index\DiscussionDocument;
-use Rrmode\FlarumES\Service\Index\PostDocument;
-use Rrmode\FlarumES\Service\Index\UserDocument;
 
 /**
  * Loading some useful things
- * Elasticsearch client binding and document macro
  * @package Rrmode\FlarumES\Provider
  */
 class Elasticsearch extends AbstractServiceProvider
@@ -29,9 +25,6 @@ class Elasticsearch extends AbstractServiceProvider
     public function register(): void
     {
         $this->registerClient();
-        PostDocument::registerDocumentMacro();
-        UserDocument::registerDocumentMacro();
-        DiscussionDocument::registerDocumentMacro();
     }
 
     public function boot(): void

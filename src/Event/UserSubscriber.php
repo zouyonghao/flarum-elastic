@@ -12,9 +12,6 @@
 namespace Rrmode\FlarumES\Event;
 
 use Flarum\User\Event\Activated;
-use Flarum\User\Event\AvatarChanged;
-use Flarum\User\Event\AvatarDeleting;
-use Flarum\User\Event\AvatarSaving;
 use Flarum\User\Event\Deleted;
 use Illuminate\Events\Dispatcher;
 
@@ -27,9 +24,16 @@ class UserSubscriber extends AbstractSubscriber
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(Activated::class, [$this, 'onActivated']);
-        $events->listen(AvatarChanged::class, [$this, 'onAvatarChanged']);
-        $events->listen(AvatarDeleting::class, [$this, 'onAvatarDeleting']);
-        $events->listen(AvatarSaving::class, [$this, 'onAvatarSaving']);
         $events->listen(Deleted::class, [$this, 'onDeleted']);
+    }
+
+    public function onActivated(Activated $event): void
+    {
+        $this->search->index($event->user);
+    }
+
+    public function onDeleted(Deleted $event): void
+    {
+        $this->search->delete($event->user);
     }
 }

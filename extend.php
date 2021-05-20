@@ -24,7 +24,6 @@ use Rrmode\FlarumES\Console\CreateIndexCommand;
 use Rrmode\FlarumES\Console\DropIndexCommand;
 use Rrmode\FlarumES\Console\ReindexAllCommand;
 use Rrmode\FlarumES\Event\DiscussionSubscriber;
-use Rrmode\FlarumES\Event\PostSubscriber;
 use Rrmode\FlarumES\Event\UserSubscriber;
 use Rrmode\FlarumES\Provider\Elasticsearch;
 use Rrmode\FlarumES\Search\DiscussionGambit;
@@ -85,12 +84,13 @@ return [
         ->addGambit(UserGambit::class),
 
     /**
+     * Temporary not used
      * Post events subscriber
      * @see Post
      * @see Discussion
      */
-    (new Extend\Event())
-        ->subscribe(PostSubscriber::class),
+//    (new Extend\Event())
+//        ->subscribe(PostSubscriber::class),
 
     /**
      * Discussion events subscriber

@@ -12,16 +12,14 @@
 namespace Rrmode\FlarumES\Event;
 
 use Flarum\Post\Event\Deleted;
-use Flarum\Post\Event\Deleting;
 use Flarum\Post\Event\Hidden;
 use Flarum\Post\Event\Posted;
 use Flarum\Post\Event\Restored;
-use Flarum\Post\Event\Revised;
-use Flarum\Post\Event\Saving;
 use Flarum\Post\Post;
 use Illuminate\Events\Dispatcher;
 
 /**
+ * Temporary not used
  * Subscriptions on Post events for efficiently indexing
  * @package Rrmode\FlarumES\Event
  */
@@ -35,46 +33,28 @@ class PostSubscriber extends AbstractSubscriber
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(Deleted::class, [$this, 'onDeleted']);
-        $events->listen(Deleting::class, [$this, 'onDeleting']);
         $events->listen(Hidden::class, [$this, 'onHidden']);
         $events->listen(Posted::class, [$this, 'onPosted']);
         $events->listen(Restored::class, [$this, 'onRestored']);
-        $events->listen(Revised::class, [$this, 'onRevised']);
-        $events->listen(Saving::class, [$this, 'onSaving']);
     }
 
     public function onDeleted(Deleted $event): void
     {
-
-    }
-
-    public function onDeleting(Deleting $event): void
-    {
-
+        $this->search->delete($event->post);
     }
 
     public function onHidden(Hidden $event): void
     {
-
+        $this->search->delete($event->post);
     }
 
     public function onPosted(Posted $event): void
     {
-
+        $this->search->index($event->post);
     }
 
     public function onRestored(Restored $event): void
     {
-
-    }
-
-    public function onRevised(Revised $event): void
-    {
-
-    }
-
-    public function onSaving(Saving $event): void
-    {
-
+        $this->search->index($event->post);
     }
 }

@@ -11,8 +11,6 @@
 
 namespace Rrmode\FlarumES\Service;
 
-use Flarum\Post\Post;
-
 /**
  * ES Index service
  * @package Rrmode\FlarumES\Service
@@ -39,7 +37,6 @@ class Index extends ClientService
                 'index' => $this->indexName,
                 'body' => [
                     'settings' => $this->indexSettings(),
-//                    'mappings' => $this->indexMappings()
                 ]
             ]);
     }
@@ -64,60 +61,6 @@ class Index extends ClientService
             $this->dropIndex();
         }
         return $this->createIndex();
-    }
-
-    /**
-     * Settings array for index creating
-     * @return array
-     */
-    public function indexSettings(): array
-    {
-        return [
-            'number_of_shards' => $this->shardCount,
-            'number_of_replicas' => $this->replicasCount,
-            'analysis' => $this->setupAnalysis()
-        ];
-    }
-
-    /**
-     * Mappings array entrypoint
-     * @return \array[][]
-     */
-    public function indexMappings(): array
-    {
-        return [
-            'post' => $this->postMappings()
-        ];
-    }
-
-    /**
-     * Flarum Post model mappings
-     * @see Post
-     * @return array[]
-     */
-    public function postMappings(): array
-    {
-        return [
-            'properties' => [
-                'content' => [
-                    'type' => 'text',
-                    'analyzer' => $this->textAnalyzer,
-                    'search_analyzer' => $this->textSearchAnalyzer
-                ],
-
-                'comment_id' => [
-                    'type' => 'integer'
-                ],
-
-                'discussion_id' => [
-                    'type' => 'integer',
-                ],
-
-                'created_at' => [
-                    'type' => 'date'
-                ],
-            ]
-        ];
     }
 
     /**

@@ -22,12 +22,12 @@ class Results
     /**
      * @var Collection Raw results
      */
-    private $results;
+    public $results;
 
     /**
      * @var Collection Searching entities
      */
-    private $entities;
+    public $entities;
 
     public function __construct(Collection $raw, Collection $entities)
     {
@@ -42,13 +42,18 @@ class Results
 
     public function model(string $class): Results
     {
-        return new self($this->entities->filter(function (array $rawEntity) use ($class) {
-
+        return new Results($this->results->filter(function (array $rawResult) use ($class) {
+            $rawType = $rawResult['_type'];
+            return get_class(new $rawType) === get_class(new $class);
         }), $this->entities);
     }
 
     public function get(): Collection
     {
-        return $this->results;
+        return $this->results->map(function (array $raw) {
+            $type = $raw['_type'];
+            $object = new $type;
+            return $object::query()->newQuery()->find($raw['_source']['id']);
+        });
     }
 }

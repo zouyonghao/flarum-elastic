@@ -12,7 +12,7 @@
 namespace Rrmode\FlarumES\Service;
 
 use Flarum\Discussion\Discussion;
-use Flarum\Post\Post;
+use Flarum\Post\CommentPost;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\User;
 
@@ -32,7 +32,7 @@ class IndexParameters
      */
     protected $dynamicEntities = [
         User::class,
-        Post::class,
+        CommentPost::class,
         Discussion::class,
     ];
 
@@ -99,6 +99,19 @@ class IndexParameters
                 'min_gram' => 2,
                 'max_gram' => 50
             ]
+        ];
+    }
+
+    /**
+     * Settings array for index creating
+     * @return array
+     */
+    public function indexSettings(): array
+    {
+        return [
+            'number_of_shards' => $this->shardCount,
+            'number_of_replicas' => $this->replicasCount,
+            'analysis' => $this->setupAnalysis()
         ];
     }
 }

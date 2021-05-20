@@ -13,11 +13,9 @@ namespace Rrmode\FlarumES\Event;
 
 use Flarum\Discussion\Event\Deleted;
 
-use Flarum\Discussion\Event\Deleting;
 use Flarum\Discussion\Event\Hidden;
 use Flarum\Discussion\Event\Renamed;
 use Flarum\Discussion\Event\Restored;
-use Flarum\Discussion\Event\Saving;
 use Flarum\Discussion\Event\Started;
 use Illuminate\Events\Dispatcher;
 
@@ -30,12 +28,35 @@ class DiscussionSubscriber extends AbstractSubscriber
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(Deleted::class, [$this, 'onDeleted']);
-        $events->listen(Deleting::class, [$this, 'onDeleting']);
         $events->listen(Hidden::class, [$this, 'onHidden']);
         $events->listen(Renamed::class, [$this, 'onRenamed']);
         $events->listen(Restored::class, [$this, 'onRestored']);
-        $events->listen(Saving::class, [$this, 'onSaving']);
         $events->listen(Started::class, [$this, 'onStarted']);
     }
 
+    public function onDeleted(Deleted $event): void
+    {
+        $this->search->delete($event->discussion);
+    }
+
+    public function onHidden(Hidden $event): void
+    {
+        $this->search->delete($event->discussion);
+    }
+
+    public function onRenamed(Renamed $event): void
+    {
+        $this->search->delete($event->discussion);
+        $this->search->index($event->discussion);
+    }
+
+    public function onRestored(Restored $event): void
+    {
+        $this->search->index($event->discussion);
+    }
+
+    public function onStarted(Started $event): void
+    {
+        $this->search->index($event->discussion);
+    }
 }
