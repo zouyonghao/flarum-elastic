@@ -19,6 +19,11 @@ composer require zouyonghao/flarum-es
 composer update zouyonghao/flarum-es
 ```
 
+### Attention
+
+* Currently this extension can only support searching new discussions after installed.
+* You need to create a new discussion after the plugin installed for the first time for creating indexes in elastic search.
+
 ### Links
 
 - [Packagist](https://packagist.org/packages/zouyonghao/flarum-es)
