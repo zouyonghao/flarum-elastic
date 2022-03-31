@@ -1,5 +1,5 @@
 {
-    "name": "rrmode/flarum-es",
+    "name": "zouyonghao/flarum-es",
     "description": "Elasticsearch support for Flarum",
     "version": "0.5",
     "keywords": [
@@ -8,7 +8,7 @@
     "type": "flarum-extension",
     "license": "GPL-3.0",
     "require": {
-        "flarum/core": "^0.1.0-beta.8",
+        "flarum/core": "^1.0.0",
         "elasticsearch/elasticsearch": "^7.12"
     }
     ,
