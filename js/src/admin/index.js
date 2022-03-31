@@ -1,6 +1,8 @@
-app.initializers.add('rrmode/flarum-elasticsearch', (app) => {
+import app from 'flarum/admin/app';
+
+app.initializers.add('zouyonghao/flarum-es', (app) => {
   app.extensionData
-    .for('rrmode-elasticsearch')
+    .for('zouyonghao-es')
     .registerSetting({
       setting: 'rrmode-elasticsearch.username',
       label: app.translator.trans('rrmode-elasticsearch.admin.settings.username'),

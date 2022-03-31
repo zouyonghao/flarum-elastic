@@ -1,7 +1,7 @@
 {
     "name": "zouyonghao/flarum-es",
     "description": "Elasticsearch support for Flarum",
-    "version": "0.5",
+    "version": "1.0",
     "keywords": [
         "flarum"
     ],
@@ -19,6 +19,11 @@
         {
             "name": "rrmode",
             "email": "retretx@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Yong-Hao Zou",
+            "email": "yonghaoz1994@gmail.com",
             "role": "Developer"
         }
     ],
