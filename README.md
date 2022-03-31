@@ -10,13 +10,13 @@ A [Flarum](http://flarum.org) extension. Elasticsearch support for Flarum
 Install with composer:
 
 ```sh
-composer require zouyonghao/flarum-elasticsearch
+composer require zouyonghao/flarum-es
 ```
 
 ### Updating
 
 ```sh
-composer update zouyonghao/flarum-elasticsearch
+composer update zouyonghao/flarum-es
 ```
 
 ### Links
