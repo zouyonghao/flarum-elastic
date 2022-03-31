@@ -1,23 +1,24 @@
 # Flarum ES
 
-![License](https://img.shields.io/github/license/retretx/flarum-elastic) [![Latest Stable Version](https://img.shields.io/packagist/v/rrmode/flarum-es.svg)](                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   l)
+![License](https://img.shields.io/github/license/retretx/flarum-elastic) 
+[![Latest Stable Version](https://img.shields.io/badge/packagist-1.0.0-green)](https://packagist.org/packages/zouyonghao/flarum-es)
 
 A [Flarum](http://flarum.org) extension. Elasticsearch support for Flarum
 
 ### Installation
 
-Use [Bazaar](https://discuss.flarum.org/d/5151-flagrow-bazaar-the-extension-marketplace) or install manually with composer:
+Install with composer:
 
 ```sh
-composer require rrmode/flarum-elasticsearch
+composer require zouyonghao/flarum-elasticsearch
 ```
 
 ### Updating
 
 ```sh
-composer update rrmode/flarum-elasticsearch
+composer update zouyonghao/flarum-elasticsearch
 ```
 
 ### Links
 
-- [Packagist](https://packagist.org/packages/rrmode/flarum-es)
+- [Packagist](https://packagist.org/packages/zouyonghao/flarum-es)
